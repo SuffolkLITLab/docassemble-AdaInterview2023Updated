@@ -558,7 +558,7 @@ attachment:
       - "time_needed": ${ time_needed }
       - "pm": ${ pm }
       - "limitations_requiring": ${ limitations_requiring }
-      - "user_signature": ${ users[0].signature }
+      - "users_signature": ${ users_signature }
       - "relationship_requestor": ${ relationship_requestor }
 
 
