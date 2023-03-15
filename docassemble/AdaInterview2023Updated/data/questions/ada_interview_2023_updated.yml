@@ -1,0 +1,564 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.ALMassachusetts:al_massachusetts.yml
+  - docassemble.MassAccess:massaccess.yml
+---
+metadata:
+  title: |
+    Ask the court for ADA Accommodations
+  short title: |
+    Ask the court for ADA Accommodations
+  tags:
+    - Other
+  authors:
+    - Jessica
+---
+mandatory: True
+comment: |
+  Global interview metadata
+variable name: interview_metadata["ada_interview_2023_updated"]
+data:
+  al_weaver_version: "1.8.0"
+  generated on: "2023-01-29"
+  title: >-
+    Ask the court for ADA Accommodations
+  short title: >-
+    Ask the court for ADA Accommodations
+  description: |-
+    If you are headed to court and will need help or accommodations, you must send a form to the court's Accommodations Coordinator. This software will help by filling in the form with the answers you give to the questions. At the end you will be able to print out the completed form to turn in.
+  allowed courts: 
+    - "Boston Municipal Court"
+    - "District Court"
+    - "Housing Court"
+    - "Juvenile Court"
+    - "Land Court"
+    - "Probate and Family Court"
+    - "Superior Court"
+  categories:
+    - "ADA Accommodations"
+  typical role: "unknown"
+  generate download screen: True
+---
+code: |
+  interview_metadata['main_interview_key'] =  'ada_interview_2023_updated'
+---
+code: |
+  # This controls the default country and list of states in address field questions
+  AL_DEFAULT_COUNTRY = "US"
+---
+code: |
+  # This controls the default state in address field questions
+  AL_DEFAULT_STATE = "MA"
+---
+code: |
+  github_repo_name =  'docassemble-AdaInterview2023Updated'
+---
+code: |
+  interview_short_title = "Ask the court for ADA Accommodations"
+---
+code: |
+  al_form_type = "other" 
+---
+objects:
+  - users: ALPeopleList.using(there_are_any=True)
+---
+sections:
+  - review_ada_interview_2023_updated: Review your answers
+---
+#################### Interview order #####################
+comment: |
+  Controls order and branching logic for questions specific to this form
+id: interview_order_ada_interview_2023_updated
+code: |
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["ada_interview_2023_updated"]["allowed courts"]
+  nav.set_section("review_ada_interview_2023_updated")
+  # Below sets the user_role and user_ask_role by asking a question.
+  # You can set user_ask_role directly instead to either 'plaintiff' or 'defendant'
+  #user_ask_role
+  Before_we_begin
+  needs_accommodations
+  set_progress(10)
+  signature_date
+  set_progress(15)
+  Continue
+  users[0].address.address
+  set_progress(20)
+  juror
+  some_other_reason
+  set_progress(30)
+  trial_court
+  set_progress(40)
+  date_needed
+  signature_date
+  set_progress(60)
+  You_are_almost_done_Great_Job
+  set_progress(70)
+  access
+  set_progress(80)
+  am
+  set_progress(90)
+  signature_date
+  set_progress(95)
+  #users.gather()
+  #set_parts(subtitle=str(users))
+  users[0].email
+  set_progress(100)
+  users_signature
+  set_progress(100)
+  #witnesses.gather()
+  trial_court
+  interview_order_ada_interview_2023_updated = True
+---
+###################### Main order ######################
+comment: |
+  This block includes the logic for standalone interviews.
+  Delete mandatory: True to include in another interview
+mandatory: true
+code: |
+  al_intro_screen
+  ada_interview_2023_updated_intro
+  interview_order_ada_interview_2023_updated
+  signature_date
+  # Store anonymous data for analytics / statistics
+  store_variables_snapshot(
+      persistent=True,
+      data={
+          "zip": showifdef("users[0].address.zip"),
+          "reached_interview_end": True,
+      },
+  )
+  ada_interview_2023_updated_download
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Ask_the_court_for_ADA_Accommodations
+continue button field: ada_interview_2023_updated_intro
+question: |
+  Court Accessibility and Accommodations
+subquestion: |
+  If you are headed to court and will need help or accommodations, you must send a form to the court's Accommodations Coordinator. This software will help by filling in the form with the answers you give to the questions. At the end, you will be able to print out the completed form to turn in. 
+  
+  You must turn in the finished form at least **72 hours** before your court date.
+    
+     Please take some time to answer the questions on the next few pages. You will be able to change your answers at the end if you make a mistake.
+under: |
+  Note: Under the Americans with Disabilities Act, courts are required to provide reasonable accommodations. 
+  
+---
+id: Before we begin
+question: |
+  Before we begin
+subquestion: |
+  Please take some time to answer the questions on the next few pages. You will be able to change your answers at the end if you make a mistake.
+continue button field: Before_we_begin
+---
+id: Are you the person who needs accommodations?
+question: |
+    Are you the person who will need the accommodations, or are you are helping that person?
+subquestion: |
+    Please tell us if you are the one who needs the accommodation. 
+fields:
+  - "Are you the person who needs accommodations?": needs_accommodations
+    choices:  
+    - Yes, I am.
+    - No, I am helping the person who needs accommodations. 
+  - "How are you related to the person who needs accommodations?": relationship_requestor
+    show if: 
+      variable: needs_accommodations
+      is: No, I am helping the person who needs accommodations. 
+---
+id: Your Personal Information
+question: |
+  Your Personal Information
+subquestion: |
+  These questions are about the **person who needs accommodations**
+fields:
+  - "What is Today's Date?": signature_date
+    datatype: date
+  - "What is your full name?": users[0].name.first 
+  - "What is your phone number?": users[0].phone_number
+  - "What is your email address?": users[0].email
+--- 
+id: continue
+question: | 
+  Keep going! You are doing great!
+  
+continue button field: Continue
+--- 
+id: Your Role at Court
+question: |
+  Your Role at Court
+subquestion: |
+  Please tell us a bit about why you were called to court:
+fields:
+  - "I am a juror": juror
+    datatype: yesno
+  - "I am a party in the case": party
+    datatype: yesno
+  - "I am a witness": witness
+    datatype: yesno
+  - "I am an attorney/legal staff": attorney_legal_staff
+    datatype: yesno
+  - "I am something else.": some_other_reason
+    choices:  
+    - yes
+    - no
+    required: false
+  - "Please explain why you are coming to court": something_else
+    maxlength: 45
+    show if: 
+      variable: some_other_reason
+      is: yes
+---
+id: Court Details
+question: |
+  Court Details
+subquestion: |
+  Please tell us a bit about which court you were called to:
+fields:
+  - "What day do you need these accommodations?": date_needed
+    datatype: date
+  - "What is the case name and docket number? Example: Smith v. Jones 123445566": case_name_docket_number
+    maxlength: 34
+---
+id: You are almost done Great Job
+question: |
+  You are almost done! Great Job!
+continue button field: You_are_almost_done_Great_Job
+---
+id: Accommodations
+question: |
+  Accommodations
+subquestion: |
+  Tell us the accommodations you need:
+fields:
+  - "I need physical accommodations. Examples: I need help accessing a parking lot. I need help at the entrance. I need a handicap restroom. I cannot take stairs/I will need an elevator.": access
+    choices: 
+    - yes
+    - no
+  - "I need some other kind of help.": issue_related
+    choices: 
+    - yes
+    - no
+  - "I need a Sign language interpreter": sign_language_interpreter
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need Large print": large_print
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need Digital Audio Reading": digital_audio_reading
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need an Assistive Listening Device": assistive_listening_devices
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need translating/CART (Communication Access Real-Time Translation)": cart_co
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need something else": please_specify
+    datatype: yesno
+    show if: 
+      variable: issue_related
+      is: yes
+  - "I need:": specific_need
+    maxlength: 40
+    required: false
+    show if:
+      variable: please_specify
+      is: true
+  - "I need these accommodations because:": limitations_requiring
+    input type: area
+    maxlength: 602
+---
+id: All done
+question: |
+  Time & Date
+subquestion: |
+  Please add the time and date that you will need the accommodations.
+fields:
+  - "Time needed": time_needed
+    datatype: time
+  - "Am": am
+    datatype: yesno
+  - "Pm": pm
+    datatype: yesno
+---
+id: signature
+question: |
+  Please sign your form by filling out your name below
+subquestion: |
+  By filling in your name you acknowledge that you are signing this form. 
+fields: 
+  - "Type out your full name in the box": users_signature
+    datatype: text
+---
+id: preview ada_interview_2023_updated
+question: |
+  Preview your form before you download it
+subquestion: |
+  Here is a preview of the form you will sign on the next page.   
+  
+  ${ al_court_bundle.as_pdf(key='preview') }
+
+  Click the image to open it in a new tab. Click the "Edit answers" button
+  to edit your answers.
+
+  ${ action_button_html(url_action('review_ada_interview_2023_updated'), label='Edit answers', color='info') }
+  
+  Remember to come back to this window to continue and sign your form.
+continue button field: ada_interview_2023_updated_preview_question    
+---
+code: |
+  signature_fields = ['users[0].signature']
+---
+code: |
+  # This is a placeholder for the addresses that will be searched
+  # for matching address to court. Edit if court venue is based on 
+  # a different address than the user's
+  [user.address.address for user in users.complete_elements()]
+  addresses_to_search = [user.address for user in users.complete_elements()]
+---
+id: ada interview 2023 updated review screen
+event: review_ada_interview_2023_updated
+question: |
+  Review your answers
+review:
+  - Edit: signature_date
+    button: |
+      **Date of signature**:
+      ${ signature_date }
+  - Edit: users.revisit
+    button: |
+      **Users**
+
+      % for item in users:
+        * ${ item }
+      % endfor
+  - Edit: juror
+    button: |
+      **Juror**:
+      ${ word(yesno(juror)) }
+  - Edit: witnesses.revisit
+    button: |
+      **Witnesses**
+
+      % for item in witnesses:
+        * ${ item }
+      % endfor
+  - Edit: party
+    button: |
+      **Party**:
+      ${ word(yesno(party)) }
+  - Edit: attorney_legal_staff
+    button: |
+      **Attorney legal staff**:
+      ${ word(yesno(attorney_legal_staff)) }
+  - Edit: something_else
+    button: |
+      **Something else**:
+      ${ something_else }
+  - Edit: trial_court
+    button: |
+      **Trial court**
+  
+      % if defined("trial_court.name.first"):
+      * name: ${ trial_court.name.full() }
+      % endif
+  - Edit: date_needed
+    button: |
+      **Date needed**:
+      ${ date_needed }
+  - Edit: case_name_docket_number
+    button: |
+      **Case name docket number**:
+      ${ case_name_docket_number }
+  - Edit: access
+    button: |
+      **Access Related Assistance**:
+      ${ word(yesno(access)) }
+  - Edit: issue_related
+    button: |
+      **Issue related Assistance**:
+      ${ word(yesno(issue_related)) }
+  - Edit: sign_language_interpreter
+    button: |
+      **Sign language interpreter**:
+      ${ word(yesno(sign_language_interpreter)) }
+  - Edit: large_print
+    button: |
+      **Large print**:
+      ${ word(yesno(large_print)) }
+  - Edit: digital_audio_reading
+    button: |
+      **Digital audio reading**:
+      ${ word(yesno(digital_audio_reading)) }
+  - Edit: assistive_listening_devices
+    button: |
+      **Assistive listening devices**:
+      ${ word(yesno(assistive_listening_devices)) }
+  - Edit: cart_co
+    button: |
+      **Cart co**:
+      ${ word(yesno(cart_co)) }
+  - Edit: specific_need
+    button: |
+      **Specific other need**:
+      ${ specific_need }
+  - Edit: please_specify
+    button: |
+      **Please specify**:
+      ${ word(yesno(please_specify)) }
+  - Edit: am
+    button: |
+      **Am**:
+      ${ word(yesno(am)) }
+  - Edit: time_needed
+    button: |
+      **Time needed**:
+      ${ time_needed }
+  - Edit: pm
+    button: |
+      **Pm**:
+      ${ word(yesno(pm)) }
+  - Edit: limitations_requiring
+    button: |
+      **Limitations requiring**:
+      > ${ single_paragraph(limitations_requiring) }
+  - Edit: relationship_requestor
+    button: |
+      **Relationship requestor**:
+      ${ relationship_requestor }
+---
+continue button field: users.revisit
+question: |
+  Edit users
+subquestion: |
+  ${ users.table }
+
+  ${ users.add_action() }
+---
+table: users.table
+rows: users
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+  - Phone number: |
+      row_item.phone_number if defined("row_item.phone_number") else ""
+  - Email: |
+      row_item.email if defined("row_item.email") else ""
+  - Signature: |
+      row_item.signature if defined("row_item.signature") else ""
+edit:
+  - name.first
+  - email
+  - signature
+  - phone_number
+confirm: True
+
+---
+continue button field: witnesses.revisit
+question: |
+  Edit witnesses
+subquestion: |
+  ${ witnesses.table }
+
+  ${ witnesses.add_action() }
+---
+table: witnesses.table
+rows: witnesses
+columns:
+  - Name: |
+      row_item.name.full() if defined("row_item.name.first") else ""
+edit:
+  - name.first
+confirm: True
+
+---
+id: download ada_interview_2023_updated
+event: ada_interview_2023_updated_download
+question: |
+  All done
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
+
+  ${ action_button_html(url_action('review_ada_interview_2023_updated'), label='Edit answers', color='info') }
+  
+  
+  ${ al_user_bundle.download_list_html() }
+  
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+
+---
+# ALDocument objects specify the metadata for each template
+objects:
+  - ada_interview_2023_updated_Post_interview_instructions: ALDocument.using(title="Instructions", filename="ada_interview_2023_updated_next_steps.docx", enabled=True, has_addendum=False)
+  - ada_interview_2023_updated_attachment: ALDocument.using(title="Ask the court for ADA Accommodations", filename="ada_interview_2023_updated", enabled=True, has_addendum=False, )
+---
+# Bundles group the ALDocuments into separate downloads, such as for court and for the user
+objects:
+  - al_user_bundle: ALDocumentBundle.using(elements=[ada_interview_2023_updated_Post_interview_instructions, ada_interview_2023_updated_attachment], filename="ada_interview_2023_updated", title="All forms to download for your records", enabled=True)
+  - al_court_bundle: ALDocumentBundle.using(elements=[ada_interview_2023_updated_attachment],  filename="ada_interview_2023_updated", title="All forms to deliver to court", enabled=True)
+---
+# Each attachment defines a key in an ALDocument. We use `i` as the placeholder here so the same template is 
+# used for "preview" and "final" keys, and logic in the template checks the value of 
+# `i` to show or hide the user's signature
+attachment:
+  name: Post-interview-Instructions
+  filename: ada_interview_2023_updated_next_steps
+  docx template file: ada_interview_2023_updated_next_steps.docx
+  variable name: ada_interview_2023_updated_Post_interview_instructions[i]
+  skip undefined: True
+---
+attachment:
+  name: ada interview 2023 updated
+  filename: ada_interview_2023_updated
+  variable name: ada_interview_2023_updated_attachment[i]
+  skip undefined: True
+  pdf template file: ada_interview_2023_updated.pdf
+  fields:
+      - "signature_date": ${ signature_date }
+      - "users_name_full": ${ users[0] }
+      - "users1_phone_number": ${ users[0].phone_number }
+      - "users1_email": ${ users[0].email }
+      - "users_address_one_line": ${ users[0].address.on_one_line() }
+      - "juror": ${ juror }
+      - "witness": ${ witness }
+      - "party": ${ party }
+      - "attorney_legal_staff": ${ attorney_legal_staff }
+      - "something_else": ${ something_else }
+      - "trial_court": ${ trial_court }
+      - "date_needed__1": ${ date_needed.format() }
+      - "date_needed__2": ${ date_needed.format() }
+      - "case_name_docket_number": ${ case_name_docket_number }
+      - "access": ${ access }
+      - "issue_related": ${ issue_related }
+      - "sign_language_interpreter": ${ sign_language_interpreter }
+      - "large_print": ${ large_print }
+      - "digital_audio_reading": ${ digital_audio_reading }
+      - "assistive_listening_devices": ${ assistive_listening_devices }
+      - "cart_co": ${ cart_co }
+      - "specific_need": ${ specific_need }
+      - "please_specify": ${ please_specify }
+      - "am": ${ am }
+      - "time_needed": ${ time_needed }
+      - "pm": ${ pm }
+      - "limitations_requiring": ${ limitations_requiring }
+      - "user_signature": ${ users[0].signature }
+      - "relationship_requestor": ${ relationship_requestor }
+
+
