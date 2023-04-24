@@ -61,7 +61,7 @@ code: |
   al_form_type = "other" 
 ---
 objects:
-  - users: ALPeopleList.using(there_are_any=True)
+ - users: ALPeopleList.using(ask_number=True, target_number=1)
 ---
 sections:
   - review_ada_interview_2023_updated: Review your answers
@@ -117,7 +117,7 @@ comment: |
   Delete mandatory: True to include in another interview
 mandatory: true
 code: |
-  al_intro_screen
+  #al_intro_screen
   ada_interview_2023_updated_intro
   interview_order_ada_interview_2023_updated
   signature_date
@@ -202,7 +202,7 @@ fields:
   - "I am an attorney/legal staff": attorney_legal_staff
     datatype: yesno
   - "I am something else.": some_other_reason
-    choices:  
+    choices:
     - yes
     - no
     required: false
@@ -298,11 +298,17 @@ fields:
 id: signature
 question: |
   Please sign your form by filling out your name below
-subquestion: |
-  By filling in your name you acknowledge that you are signing this form. 
+subquestion: | 
 fields: 
-  - "Type out your full name in the box": users_signature
+  - "By choosing 'yes'I confirm that by typing my name I am signing this form.": confirmed_signature
+    choices: 
+     - yes
+     - no
+  - "Type out your full name in the box as your signature": users_signature
     datatype: text
+    show if: 
+      variable: confirmed_signature
+      is: yes
 ---
 id: preview ada_interview_2023_updated
 question: |
@@ -491,7 +497,21 @@ event: ada_interview_2023_updated_download
 question: |
   All done
 subquestion: |
-  Thank you ${users}. Your form is ready to download and deliver.
+  Thank you ${users[0].name.first}. Your form is ready to download and deliver.
+  
+  The ADA Coordinator for the ${ trial_court } is: 
+
+  % for coordinator in trial_court.ada_coordinators:
+  
+  ${ coordinator.get("name") } [BR]
+  ${ coordinator.get("phone") } [BR]
+  ${ coordinator.get("email") } [BR]
+  % endfor
+  
+  ${ trial_court.address.on_one_line() }
+  
+  If you cannot reach the ADA coordinator, the main phone number for ${ trial_court } is: 
+  ${ trial_court.phone }
   
   View, download and send your form below. Click the "Edit answers" button to fix any mistakes.
 
