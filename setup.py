@@ -43,9 +43,9 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
                 out.setdefault(package, []).append(prefix+name)
     return out
 
-setup(name='docassemble.AdaInterview2023Updated',
+setup(name='docassemble.AdaInterview',
       version='1.1.1',
-      description='Fill out a Massachusetts Trial Court ADA accommodation request (TC0035)',
+      description='Ask a Massachusetts Trial Court for a change that helps someone with a disability take part',
       long_description=Path(__file__).with_name('README.md').read_text(encoding='utf-8'),
       long_description_content_type='text/markdown',
       author='Jessica',
@@ -53,8 +53,8 @@ setup(name='docassemble.AdaInterview2023Updated',
       license='The MIT License',
       url='https://courtformsonline.org',
       packages=find_namespace_packages(),
-      install_requires=[],
+      install_requires=['docassemble.AssemblyLine', 'docassemble.LITLabTheme'],
       zip_safe=False,
-      package_data=find_package_data(where='docassemble/AdaInterview2023Updated/', package='docassemble.AdaInterview2023Updated'),
+      package_data=find_package_data(where='docassemble/AdaInterview/', package='docassemble.AdaInterview'),
      )
 

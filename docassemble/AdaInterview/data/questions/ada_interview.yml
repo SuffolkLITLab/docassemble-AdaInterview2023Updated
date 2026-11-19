@@ -1,12 +1,21 @@
 ---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+  - docassemble.LITLabTheme:main.yml
+---
 metadata:
-  title: Ask a Massachusetts Trial Court for an ADA accommodation
-  short title: Court ADA accommodation request
-  description: Fill out a request for an accommodation that helps you take part in a Massachusetts Trial Court case. Download the completed request to sign and give to the court.
+  title: Ask the court for a change in rules to let you participate if you have a disability
+  short title: Ask the court for a change
+  description: >-
+    Ask a Massachusetts Trial Court for a change that helps someone with a disability take part in a case.
+    The court calls this a reasonable accommodation. Fill out the form online, then sign it and give it to the court.
   can_I_use_this_form: |
-    Use this form for an accommodation such as a sign language interpreter, assistive listening device, or documents that work with a screen reader. Some requests, such as more time to file or permission to attend by video, require a motion. Ask your court's ADA Assistance Coordinator if you are unsure.
+    Use this form for yourself or someone you are helping. You can ask for help such as a sign language interpreter,
+    equipment that helps you hear, or documents that work with a screen reader.
+    Some changes, like more time to file or permission to go to court by video, may need a separate written request to the judge.
   before_you_start: |
-    Find the court name, case name, and case number if you know it. Have your hearing date and time ready if there is one. You do not need to upload medical records.
+    Have the court name, case name, and case number if you know it. Write down the date and time of any hearing.
+    Leave out medical records.
   authors:
     - Jessica Vandervort
     - Suffolk LIT Lab
@@ -27,7 +36,7 @@ metadata:
   tags:
     - RI-03-02-02-00
     - RI-03-02-03-00
-  help_page_title: ADA accessibility at Massachusetts courts
+  help_page_title: How to ask a Massachusetts court for help taking part
   help_page_url: https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act
   estimated_completion_minutes: 10
   fees:
@@ -36,10 +45,19 @@ metadata:
 features:
   hide standard menu: True
 ---
+variable name: AL_ORGANIZATION_TITLE
+data: Suffolk LIT Lab
+---
+code: |
+  interview_short_title = all_variables(special="metadata")["title"]
+  al_form_type = "existing_case"
+---
 id: interview order
 mandatory: True
 code: |
-  request_intro
+  # People who already passed the former opening screen can continue their request.
+  if not showifdef("request_intro"):
+    al_intro_screen
   request_scope
   if request_scope == "other":
     other_request
@@ -62,37 +80,37 @@ code: |
   answers_reviewed
   download_request
 ---
-id: introduction
-question: Ask a Massachusetts Trial Court for an ADA accommodation
-subquestion: |
-  This interview helps you fill out form **TC0035**. It makes a PDF for you to sign and give to the court in person or by mail.
-
-  The court keeps the information on TC0035 confidential unless you waive confidentiality in writing or the law requires disclosure. Include only the information the court needs. Do not send medical records.
-
-  Start as early as you can. The court suggests asking at least 10 business days before you need an accommodation when possible. You can still ask on shorter notice.
-
-  [Read the court's ADA instructions](https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act)
-continue button field: request_intro
----
 id: choose the right request
-question: Do you need this request form for a Massachusetts Trial Court case?
+question: Is this the right form for your request?
 subquestion: |
-  This form can request a sign language interpreter or an assistive listening device. It can also request court documents that work with a screen reader.
+  Use this form in a Massachusetts Trial Court case. Here are some changes you can ask for:
 
-  You may need a motion to ask for more time to file or to attend by video. A motion can also ask for changes to how the hearing works. Jury service and the Appeals Court or Supreme Judicial Court have their own process.
+  * A sign language interpreter
+  * Equipment that helps you hear
+  * Documents that work with a screen reader
+
+  You may need to ask a judge for some changes. Examples include more time to file or going to court by video.
+  You ask in writing. The court calls that a motion. Jury duty and appeals courts have their own process.
+
+  Ask as early as you can. The court suggests asking at least 10 business days ahead when possible.
+  You can still ask if you have less time.
+
+  The court keeps this form private. The court can share it if you give written permission or the law requires it.
+  Include only what the court needs. Leave out medical records.
 field: request_scope
 choices:
-  - Yes, I need the Trial Court request form: request
-  - I need a different form or I am not sure: other
+  - This form fits my request: request
+  - I need a different form or I am unsure: other
 ---
 id: other request
 event: other_request
-question: Find the right way to ask for an accommodation
+question: Find out how to ask the court for a change
 subquestion: |
-  If you are unsure, [contact the ADA Assistance Coordinator at your courthouse](https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act).
+  If you are unsure which form to use, ask the person at your courthouse who helps with disability requests.
+  The court calls them the [ADA Assistance Coordinator](https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act).
 
-  * For jury service, see [jury duty accessibility](https://www.mass.gov/info-details/learn-about-jury-duty-accessibility).
-  * For the Appeals Court, Supreme Judicial Court, or a Trial Court motion, see [the court's ADA forms](https://www.mass.gov/lists/americans-with-disabilities-act-ada-court-forms-instructions-and-information).
+  * For jury service, see [help taking part in jury duty](https://www.mass.gov/info-details/learn-about-jury-duty-accessibility).
+  * For the Appeals Court, Supreme Judicial Court, or a Trial Court motion, see [the court’s forms for disability requests](https://www.mass.gov/lists/americans-with-disabilities-act-ada-court-forms-instructions-and-information).
 ---
 id: case information
 question: Where is the case being heard?
@@ -126,7 +144,8 @@ data:
   superior: Superior Court
 ---
 id: person contact information
-question: Who needs the accommodation?
+question: Who needs the court to make a change?
+subquestion: Give the court a phone number or email address where it can reach this person.
 fields:
   - Full name: person_name
     maxlength: 85
@@ -153,8 +172,8 @@ fields:
   - Role in the case: person_role
     datatype: radio
     choices:
-      - A party to the case: party
-      - An attorney or legal staff member: legal_staff
+      - A person who brought the case or is responding to it: party
+      - A lawyer or legal staff member: legal_staff
       - A witness: witness
       - Another role: other
   - Describe the role: other_case_role
@@ -166,7 +185,7 @@ fields:
 id: hearing scheduled
 question: Is there a hearing date?
 fields:
-  - Hearing date is known: hearing_is_scheduled
+  - Do you know the hearing date?: hearing_is_scheduled
     datatype: yesnoradio
 ---
 id: hearing date and time
@@ -179,55 +198,61 @@ fields:
     required: False
 ---
 id: listed accommodations
-question: Does the person need any of these accommodations?
+question: Does the person need any of these changes?
 subquestion: |
-  The form lists assistive listening devices, live captions, and court documents by email. It also lists sign language interpreters and use of a powered mobility device.
+  * Equipment that helps them hear
+  * Words on a screen as people speak
+  * Court documents by email so a screen reader can read them
+  * A sign language interpreter
+  * Permission to use a powered device to get around
 
-  You can also describe another accommodation.
+  If they need a different change, you can describe it on the next screen.
 fields:
-  - Needs an accommodation from the list: needs_listed_accommodation
+  - Do they need a change from this list?: needs_listed_accommodation
     datatype: yesnoradio
 ---
 id: pick accommodations
-question: What accommodations does the person need?
-subquestion: Choose each accommodation the person needs.
+question: What changes does the person need?
+subquestion: Choose all that apply.
 fields:
-  - Requested accommodations: accommodations
+  - Changes to ask for: accommodations
     datatype: checkboxes
     required: False
     none of the above: False
     choices:
-      - Assistive listening device: listening
-      - Live captions (CART): cart
+      - Equipment that helps the person hear: listening
+      - Live captions (words on a screen as people speak): cart
       - Court documents by email for a screen reader: screen_reader
       - American Sign Language (ASL) interpreter: asl
       - Interpreter for another sign language: other_sign
-      - Use of a powered mobility device other than the person's motorized wheelchair: mobility
-      - Another accommodation: another
+      - Use a powered device to get around, other than the person’s motorized wheelchair: mobility
+      - Another change: another
   - Sign language: other_sign_language
     show if: accommodations["other_sign"]
     maxlength: 45
-  - Describe the powered mobility device: mobility_description
+  - Describe the device the person uses to get around: mobility_description
     show if: accommodations["mobility"]
     maxlength: 85
 validation code: |
   if not any(accommodations.values()):
-    validation_error("Select at least one accommodation to continue.", field="accommodations")
+    validation_error("Choose at least one change to continue.", field="accommodations")
 ---
 id: another accommodation
-question: What other accommodation does the person need?
+question: What other change does the person need?
 subquestion: |
-  Describe the specific help the person is asking for. For a change to the hearing or case rules, ask the court's ADA Assistance Coordinator which form to use.
+  Describe what would help the person take part in court.
+  To change how a hearing or case works, ask the court’s ADA Assistance Coordinator which form to use.
 fields:
-  - Other accommodation: other_accommodations
+  - Other change: other_accommodations
     datatype: area
     rows: 4
     maxlength: 420
 ---
 id: disability and accommodation
-question: Why does the person need the accommodation?
+question: How does the disability make it harder to take part in court?
 subquestion: |
-  Briefly explain how the disability affects the person's ability to take part in court. Include only what the court needs to understand the request. Do not include medical records.
+  Explain what is hard to do and how the change would help.
+  Include only what the court needs to understand your request. Leave out medical records.
 fields:
   - Brief explanation: disability_summary
     datatype: area
@@ -235,14 +260,15 @@ fields:
     maxlength: 420
 ---
 id: who is making the request
-question: Is ${ person_name } making and signing this request?
+question: Will ${ person_name } sign this request?
 subquestion: Choose “Yes” if you are only helping the person type their answers and they will sign the form.
 fields:
-  - The person needing the accommodation will sign: requesting_for_self
+  - The person who needs the change will sign: requesting_for_self
     datatype: yesnoradio
 ---
 id: requestor details
 question: Who will sign the request for ${ person_name }?
+subquestion: Give the court a phone number or email address where it can reach the person signing.
 fields:
   - Full name: helper_name
     maxlength: 80
@@ -263,8 +289,8 @@ validation code: |
     validation_error("Enter a phone number or email address for the person signing.", field="helper_phone")
 ---
 id: attorney number
-question: What is the signer’s Massachusetts attorney number?
-subquestion: This is the Board of Bar Overseers (BBO) number. Leave this blank if it does not apply.
+question: Is the person signing a Massachusetts lawyer?
+subquestion: If so, enter their Board of Bar Overseers (BBO) number. Otherwise, leave this blank.
 fields:
   - BBO number: request_bbo
     required: False
@@ -283,7 +309,7 @@ review:
       **Case:** ${ case_name } ${ docket_number }
   - Edit: person_name
     button: |
-      **Person needing the accommodation:** ${ person_name }
+      **Person who needs the change:** ${ person_name }
 
       **Contact:** ${ person_street } ${ person_city_state_zip } ${ person_phone } ${ person_email }
   - Edit: person_role
@@ -292,14 +318,14 @@ review:
     button: |
       **Hearing:** ${ format_date(hearing_date) if hearing_is_scheduled else "No date yet" } ${ format_time(hearing_time) if hearing_is_scheduled and hearing_time else "" }
   - Edit: needs_listed_accommodation
-    button: Review the accommodations requested
+    button: Review the changes you are asking for
   - Edit: accommodations
     show if: needs_listed_accommodation
-    button: Edit the selected accommodations
+    button: Edit the changes you chose
   - Edit: other_accommodations
     show if: not needs_listed_accommodation or accommodations["another"]
     button: |
-      **Other accommodation:** ${ other_accommodations }
+      **Other change:** ${ other_accommodations }
   - Edit: disability_summary
     button: |
       **Explanation:** ${ disability_summary }
@@ -331,19 +357,19 @@ code: |
 ---
 id: download request
 event: download_request
-question: Download your ADA accommodation request
+question: Download your request for a change
 subquestion: |
   [Download your request form (PDF)](${ tc0035_attachment.pdf.url_for(attachment=True) })
 
-  1. Review the PDF. Sign and date the request on page 2. You can print it and sign by hand. You can also sign in a PDF editor. In the signature field, type **/s/** followed by your name.
-  2. Bring or mail it to the court department and division where the case is being heard. Address it to the ADA Assistance Coordinator. Do not use e-filing.
+  1. Check the form. Sign and date page 2. You can print it and sign by hand. To sign in a PDF editor, type **/s/** and your name in the signature box.
+  2. Bring or mail the form to the court hearing the case. Address it to the ADA Assistance Coordinator.
   3. Keep a copy. If your court date is close or you need help, [contact the ADA Assistance Coordinator](https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act).
 
-  Your request has not been sent to the court. Do not attach medical records.
+  You send the form to the court yourself. Leave out medical records.
 ---
 attachment:
-  name: Massachusetts Trial Court ADA accommodation request
-  filename: massachusetts-ada-accommodation-request-tc0035
+  name: Massachusetts Trial Court request for a change
+  filename: massachusetts-court-request-for-a-change
   variable name: tc0035_attachment
   valid formats:
     - pdf
