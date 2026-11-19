@@ -190,10 +190,11 @@ fields:
 ---
 id: pick accommodations
 question: What accommodations does the person need?
-subquestion: Choose all that apply.
+subquestion: Choose each accommodation the person needs.
 fields:
   - Requested accommodations: accommodations
     datatype: checkboxes
+    required: False
     none of the above: False
     choices:
       - Assistive listening device: listening
@@ -335,7 +336,7 @@ subquestion: |
   [Download your request form (PDF)](${ tc0035_attachment.pdf.url_for(attachment=True) })
 
   1. Review the PDF. Sign and date the request on page 2. You can print it and sign by hand. You can also sign in a PDF editor. In the signature field, type **/s/** followed by your name.
-  2. Bring or mail it to the court department and division where the case is being heard, for the ADA Assistance Coordinator. Do not use e-filing.
+  2. Bring or mail it to the court department and division where the case is being heard. Address it to the ADA Assistance Coordinator. Do not use e-filing.
   3. Keep a copy. If your court date is close or you need help, [contact the ADA Assistance Coordinator](https://www.mass.gov/info-details/how-to-ask-the-court-for-a-reasonable-accommodation-under-the-americans-with-disabilities-act).
 
   Your request has not been sent to the court. Do not attach medical records.

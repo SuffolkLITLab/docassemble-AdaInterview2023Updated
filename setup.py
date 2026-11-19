@@ -44,7 +44,7 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.AdaInterview2023Updated',
-      version='1.1',
+      version='1.1.1',
       description='Fill out a Massachusetts Trial Court ADA accommodation request (TC0035)',
       long_description=Path(__file__).with_name('README.md').read_text(encoding='utf-8'),
       long_description_content_type='text/markdown',
