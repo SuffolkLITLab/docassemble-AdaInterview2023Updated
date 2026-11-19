@@ -1,5 +1,5 @@
 import os
-import sys
+from pathlib import Path
 from setuptools import setup, find_namespace_packages
 from fnmatch import fnmatchcase
 from distutils.util import convert_path
@@ -44,16 +44,16 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.AdaInterview2023Updated',
-      version='1.0',
-      description=('Ask the court for ADA Accommodations'),
-      long_description='# docassemble.AdaInterview2023Updated\r\n\r\nAsk the court for ADA Accommodations\r\n\r\n## Author\r\n\r\nJessica\r\n\r\n',
+      version='1.1',
+      description='Fill out a Massachusetts Trial Court ADA accommodation request (TC0035)',
+      long_description=Path(__file__).with_name('README.md').read_text(encoding='utf-8'),
       long_description_content_type='text/markdown',
       author='Jessica',
       author_email='jvandervort@suffolk.edu',
       license='The MIT License',
       url='https://courtformsonline.org',
       packages=find_namespace_packages(),
-      install_requires=['docassemble.ALMassachusetts>=0.1.2', 'docassemble.AssemblyLine>=2.21.0', 'docassemble.MassAccess>=0.3.0'],
+      install_requires=[],
       zip_safe=False,
       package_data=find_package_data(where='docassemble/AdaInterview2023Updated/', package='docassemble.AdaInterview2023Updated'),
      )
